@@ -9,10 +9,12 @@
 namespace App\Service;
 
 use App\Entity\Product;
-use App\Entity\SensorDataGroup;
 use JMS\Serializer\SerializationContext;
 use Psr\Log\LoggerInterface;
 use JMS\Serializer\SerializerInterface;
+use Ratchet\Client\Connector;
+use React\EventLoop\Factory;
+use WebSocket\Client;
 
 class WebFrontManager extends AbstractManager {
 
@@ -38,11 +40,9 @@ class WebFrontManager extends AbstractManager {
 	 * @param Product $product
 	 */
 	public function sendProduct(Product $product) {
-		\Ratchet\Client\connect('ws://' . $this->websocket_host)->then(function(\Ratchet\Client\WebSocket $conn) use ($product) {
-			$conn->send($this->serializer->serialize($product, 'json', SerializationContext::create()->setGroups(['product'])));
-			$conn->close();
-		}, function (\Exception $e) {
-			echo "Could not connect: {$e->getMessage()}\n";
-		});
+		$msg = $this->serializer->serialize($product, 'json', SerializationContext::create()->setGroups(['product']));
+
+		$client = new Client('ws://' . $this->websocket_host);
+		$client->send($msg);
 	}
 }

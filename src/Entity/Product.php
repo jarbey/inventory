@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity()
@@ -37,6 +38,7 @@ class Product {
 	 *
 	 * @ORM\Id
 	 * @ORM\Column(type="integer")
+	 * @Groups({"product"})
 	 */
 	private $id;
 
@@ -44,6 +46,7 @@ class Product {
 	 * @var string
 	 *
 	 * @ORM\Column(type="text")
+	 * @Groups({"product"})
 	 */
 	private $codecip;
 
@@ -51,6 +54,7 @@ class Product {
 	 * @var
 	 *
 	 * @ORM\Column(type="text")
+	 * @Groups({"product"})
 	 */
 	private $designation;
 
@@ -58,6 +62,7 @@ class Product {
 	 * @var integer
 	 *
 	 * @ORM\Column(type="integer")
+	 * @Groups({"product"})
 	 */
 	private $stock;
 
@@ -65,6 +70,7 @@ class Product {
 	 * @var integer
 	 *
 	 * @ORM\Column(type="integer")
+	 * @Groups({"product"})
 	 */
 	private $inventaire = 1;
 

@@ -44,12 +44,15 @@ class TestCommand extends AbstractCommand {
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 		$question = new Question('Ean code ?');
-		$ean = $helper->ask($input, $output, $question);
 
-		$product = $this->product_repository->getFromEan($ean);
+		while (true) {
+			$ean = $helper->ask($input, $output, $question);
 
-		$output->writeln($product->getDesignation());
+			$product = $this->product_repository->getFromEan($ean);
 
-		$this->web_front_manager->sendProduct($product);
+			$output->writeln($product->getDesignation());
+
+			$this->web_front_manager->sendProduct($product);
+		}
 	}
 }
