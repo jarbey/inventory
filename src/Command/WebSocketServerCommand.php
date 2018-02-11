@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class WebSocketServerCommand extends AbstractCommand {
 	protected function configure() {
 		$this
-			->setName('cellar:websocket:server')
+			->setName('inventory:websocket:server')
 			->setDescription('Start websocket server');
 	}
 

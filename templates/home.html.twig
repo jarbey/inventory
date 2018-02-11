@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div id="ws-content-receiver">
+		Connecting...
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	<script type="text/javascript">
+		(function () {
+			'use strict';
+
+			var _receiver = document.getElementById('ws-content-receiver');
+			var ws = new WebSocket('ws://{{ ws_url }}');
+
+			ws.onopen = function () {
+				_receiver.innerHTML = 'Connected !';
+			};
+
+			ws.onmessage = function (event) {
+				try {
+					var product = JSON.parse(event.data);
+					console.log(product);
+
+					_receiver.innerHTML = event.data;
+				} catch (error) {
+					console.log(error);
+				}
+			};
+
+			ws.onclose = function () {
+			};
+
+			ws.onerror = function () {
+			};
+		})();
+	</script>
+{% endblock %}
