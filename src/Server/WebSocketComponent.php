@@ -25,6 +25,7 @@ class WebSocketComponent implements MessageComponentInterface {
 	private $last_message;
 
 	public function __construct(ProductRepository $product_repository) {
+		echo 'Create WebSocketComponent';
 		$this->clients = new \SplObjectStorage();
 		$this->product_repository = $product_repository;
 	}

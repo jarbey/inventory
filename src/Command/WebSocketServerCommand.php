@@ -30,6 +30,7 @@ class WebSocketServerCommand extends AbstractCommand {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+		$output->writeln('Start WebSocket server');
 		$server = IoServer::factory(
 			new HttpServer(new WsServer($this->web_socket_component)),
 			8082,
