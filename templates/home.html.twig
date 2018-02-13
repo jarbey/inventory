@@ -76,9 +76,9 @@
 					var server_message = JSON.parse(event.data);
 					console.log(server_message);
 
-					if (server_message.state != '') {
+					if (server_message.state != null) {
 						_receiver.innerHTML = server_message.state;
-					} else if (server_message.codecip != '') {
+					} else if (server_message.cip != '') {
 						displayProduct(server_message);
 					}
 				} catch (error) {
