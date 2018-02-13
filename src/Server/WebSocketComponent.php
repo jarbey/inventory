@@ -53,7 +53,7 @@ class WebSocketComponent implements MessageComponentInterface {
 
 		$server_message = json_decode($message);
 		if ($server_message != null) {
-			if (property_exists($server_message, 'cip')) {
+			if (isset($server_message->cip)) {
 				$scanned_product = $server_message;
 
 				$product = new Product($scanned_product->id, $scanned_product->cip, $scanned_product->name, $scanned_product->stock, $scanned_product->inventory);
