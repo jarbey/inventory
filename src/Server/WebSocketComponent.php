@@ -60,6 +60,7 @@ class WebSocketComponent implements MessageComponentInterface {
 		$server_message = json_decode($message);
 		if ($server_message != null) {
 			if (isset($server_message->cip)) {
+				$this->logger->debug('Message has CIP : ' . $server_message->cip);
 				$scanned_product = $server_message;
 
 				$product = new Product($scanned_product->id, $scanned_product->cip, $scanned_product->name, $scanned_product->stock, $scanned_product->inventory);
@@ -67,7 +68,9 @@ class WebSocketComponent implements MessageComponentInterface {
 
 				// TODO : Use JMS Serializer here
 				$last_message = json_encode($product);
+				$this->logger->debug('Product to send : ' . $last_message);
 			} else {
+				$this->logger->debug('Message without CIP');
 				$last_message = $message;
 			}
 		}
