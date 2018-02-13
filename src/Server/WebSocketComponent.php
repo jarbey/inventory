@@ -43,11 +43,13 @@ class WebSocketComponent implements MessageComponentInterface {
 
 	public function onError(ConnectionInterface $conn, \Exception $e) {
 		$conn->send('An error has occurred: ' . $e->getMessage());
-		$conn->close();
+		//$conn->close();
 	}
 
 	public function onMessage(ConnectionInterface $from, $message) {
 		$last_message = null;
+
+		echo 'Message received : ' . $message . "\n";
 
 		$server_message = json_decode($message);
 		if ($server_message != null) {
