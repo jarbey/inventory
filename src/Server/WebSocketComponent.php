@@ -11,6 +11,7 @@ namespace App\Server;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Psr\Log\LoggerInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 
@@ -21,13 +22,18 @@ class WebSocketComponent implements MessageComponentInterface {
 	/** @var ProductRepository */
 	private $product_repository;
 
+	/** @var LoggerInterface */
+	private $logger;
+
 	/** @var string */
 	private $last_message;
 
-	public function __construct(ProductRepository $product_repository) {
-		echo 'Create WebSocketComponent' . "\n";
+	public function __construct(LoggerInterface $logger, ProductRepository $product_repository) {
+		$this->logger = $logger;
 		$this->clients = new \SplObjectStorage();
 		$this->product_repository = $product_repository;
+
+		$this->logger->info('Create WebSocketComponent');
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
@@ -42,14 +48,14 @@ class WebSocketComponent implements MessageComponentInterface {
 	}
 
 	public function onError(ConnectionInterface $conn, \Exception $e) {
+		$this->logger->info('An error has occurred: ' . $e->getMessage());
 		$conn->send('An error has occurred: ' . $e->getMessage());
 		//$conn->close();
 	}
 
 	public function onMessage(ConnectionInterface $from, $message) {
 		$last_message = null;
-
-		echo 'Message received : ' . $message . "\n";
+		$this->logger->info('Message received : ' . $message);
 
 		$server_message = json_decode($message);
 		if ($server_message != null) {
