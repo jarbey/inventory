@@ -1,10 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-	<div id="ws-content-receiver">
-		Connecting...
-	</div>
-
 	<div class="row">
 		<div class="col">
 			<div class="card" id="card_state">
@@ -12,7 +8,7 @@
 					<div class="card-body">
 						<div class="row">
 							<div class="col">
-								<i class="fa fa-medkit fa-5x"></i>
+								<i class="fa fa-medkit icon-huge"></i>
 							</div>
 							<div class="col-10 text-right">
 								<div class="huge" id="product_name">???</div>
@@ -33,10 +29,10 @@
 					<div class="card-body">
 						<div class="row">
 							<div class="col">
-								<i class="fa fa-industry fa-5x"></i>
+								<i class="fa fa-industry icon-huge"></i>
 							</div>
 							<div class="col text-right">
-								<div class="huge" id="product_stock">???</div>
+								<div class="huge2" id="product_stock">???</div>
 							</div>
 						</div>
 					</div>
@@ -49,16 +45,22 @@
 					<div class="card-body">
 						<div class="row">
 							<div class="col">
-								<i class="fa fa-check-square fa-5x" id="card_icon"></i>
+								<i class="fa fa-check-square icon-huge" id="card_icon"></i>
 							</div>
 							<div class="col text-right">
-								<div class="huge" id="product_inventory">???</div>
+								<div class="huge2" id="product_inventory">???</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
+	<div class="row">
+		<div class="col">&nbsp;</div>
+	</div>
+	<div class="row" id="ws-content-receiver">
+		Connecting...
 	</div>
 {% endblock %}
 
@@ -67,13 +69,13 @@
 		(function () {
 			'use strict';
 
-			var _receiver = document.getElementById('ws-content-receiver');
 			connectWebSocket();
 		})();
 
 		function connectWebSocket() {
 			console.log('Connect to {{ ws_url }}');
 			var ws = new WebSocket('ws://{{ ws_url }}');
+			var _receiver = document.getElementById('ws-content-receiver');
 
 			ws.onopen = function () {
 				_receiver.innerHTML = 'Connected !';
@@ -96,7 +98,7 @@
 
 			ws.onclose = function () {
 				console.log('OnClose');
-				setInterval(connectWebSocket, 2000);
+				setTimeout(connectWebSocket, 2000);
 			};
 
 			ws.onerror = function () {
