@@ -25,7 +25,7 @@ class WebSocketComponent implements MessageComponentInterface {
 	private $last_message;
 
 	public function __construct(ProductRepository $product_repository) {
-		echo 'Create WebSocketComponent';
+		echo 'Create WebSocketComponent' . "\n";
 		$this->clients = new \SplObjectStorage();
 		$this->product_repository = $product_repository;
 	}
@@ -51,10 +51,10 @@ class WebSocketComponent implements MessageComponentInterface {
 
 		$server_message = json_decode($message);
 		if ($server_message != null) {
-			if ($server_message->codecip != '') {
+			if (property_exists($server_message, 'cip')) {
 				$scanned_product = $server_message;
 
-				$product = new Product($scanned_product->id, $scanned_product->codecip, $scanned_product->designation, $scanned_product->stock, $scanned_product->inventaire);
+				$product = new Product($scanned_product->id, $scanned_product->cip, $scanned_product->name, $scanned_product->stock, $scanned_product->inventory);
 				$product = $this->product_repository->setOrUpdateProduct($product);
 
 				// TODO : Use JMS Serializer here
