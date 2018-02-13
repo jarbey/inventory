@@ -8,9 +8,10 @@
 
 namespace App\Server;
 
-
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
@@ -25,13 +26,17 @@ class WebSocketComponent implements MessageComponentInterface {
 	/** @var LoggerInterface */
 	private $logger;
 
+	/** @var SerializerInterface */
+	private $serializer;
+
 	/** @var string */
 	private $last_message;
 
-	public function __construct(LoggerInterface $logger, ProductRepository $product_repository) {
+	public function __construct(LoggerInterface $logger, ProductRepository $product_repository, SerializerInterface $serializer) {
 		$this->logger = $logger;
 		$this->clients = new \SplObjectStorage();
 		$this->product_repository = $product_repository;
+		$this->serializer = $serializer;
 
 		$this->logger->info('Create WebSocketComponent');
 	}
@@ -67,7 +72,7 @@ class WebSocketComponent implements MessageComponentInterface {
 				$product = $this->product_repository->setOrUpdateProduct($product);
 
 				// TODO : Use JMS Serializer here
-				$last_message = json_encode($product);
+				$last_message = $this->serializer->serialize($product, 'json', SerializationContext::create()->setGroups(['product']));
 				$this->logger->debug('Product to send : ' . $last_message);
 			} else {
 				$this->logger->debug('Message without CIP');
