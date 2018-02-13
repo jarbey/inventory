@@ -25,6 +25,7 @@ class ProductRepository extends ServiceEntityRepository {
 			return $product;
 		} else if ($increase_inventory) {
 			$existing_product->addInventory($product->getInventory());
+			$this->getEntityManager()->flush($existing_product);
 		}
 		return $existing_product;
 	}

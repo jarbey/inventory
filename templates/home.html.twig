@@ -68,6 +68,11 @@
 			'use strict';
 
 			var _receiver = document.getElementById('ws-content-receiver');
+			connectWebSocket();
+		})();
+
+		function connectWebSocket() {
+			console.log('Connect to {{ ws_url }}');
 			var ws = new WebSocket('ws://{{ ws_url }}');
 
 			ws.onopen = function () {
@@ -90,11 +95,13 @@
 			};
 
 			ws.onclose = function () {
+				console.log('OnClose');
+				setInterval(connectWebSocket, 2000);
 			};
 
 			ws.onerror = function () {
 			};
-		})();
+		}
 
 		function displayProduct(product) {
 			$('#product_name').html(product.name);
