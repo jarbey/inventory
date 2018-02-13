@@ -6,30 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 
 /**
- * @ORM\Entity()
- * @ORM\NamedNativeQueries({
- *      @ORM\NamedNativeQuery(
- *          name                = "getFromEan",
- *          resultSetMapping	= "mappingFromEan",
- *          query               = "SELECT pdt.t_produit_id AS id, pdt.codecip AS codecip, pdt.designation AS designation, geo.quantite stock FROM t_produit pdt JOIN t_produitgeographique geo ON pdt.t_produit_id = geo.t_produit_id WHERE pdt.codecip = :code OR pdt.codecip7 = :code OR pdt.t_produit_id IN (SELECT t_produit_id from t_code_ean13 where code_ean13 = :code)"
- *      ),
- * })
- * @ORM\SqlResultSetMappings({
- *      @ORM\SqlResultSetMapping(
- *          name    			= "mappingFromEan",
- *          entities			= {
- *              @ORM\EntityResult(
- *                  entityClass = "__CLASS__",
- *                  fields      = {
- *                      @ORM\FieldResult(name = "id", column = "ID"),
- *                      @ORM\FieldResult(name = "codecip", column = "CODECIP"),
- *                      @ORM\FieldResult(name = "designation", column = "DESIGNATION"),
- *                      @ORM\FieldResult(name = "stock", column = "STOCK"),
- *                  }
- *              )
- *          }
- *      )
- * })
+ * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
  */
 class Product {
 
@@ -48,7 +25,7 @@ class Product {
 	 * @ORM\Column(type="text")
 	 * @Groups({"product"})
 	 */
-	private $codecip;
+	private $cip;
 
 	/**
 	 * @var
@@ -56,7 +33,7 @@ class Product {
 	 * @ORM\Column(type="text")
 	 * @Groups({"product"})
 	 */
-	private $designation;
+	private $name;
 
 	/**
 	 * @var integer
@@ -72,22 +49,22 @@ class Product {
 	 * @ORM\Column(type="integer")
 	 * @Groups({"product"})
 	 */
-	private $inventaire = 1;
+	private $inventory = 1;
 
 	/**
 	 * Product constructor.
 	 * @param int $id
-	 * @param string $codecip
-	 * @param $designation
+	 * @param string $cip
+	 * @param $name
 	 * @param int $stock
-	 * @param int $inventaire
+	 * @param int $inventory
 	 */
-	public function __construct($id, $codecip, $designation, $stock, $inventaire) {
+	public function __construct($id, $cip, $name, $stock, $inventory) {
 		$this->id = $id;
-		$this->codecip = $codecip;
-		$this->designation = $designation;
+		$this->cip = $cip;
+		$this->name = $name;
 		$this->stock = $stock;
-		$this->inventaire = $inventaire;
+		$this->inventory = $inventory;
 	}
 
 	/**
@@ -110,16 +87,16 @@ class Product {
 	/**
 	 * @return string
 	 */
-	public function getCodecip() {
-		return $this->codecip;
+	public function getCip() {
+		return $this->cip;
 	}
 
 	/**
-	 * @param string $codecip
+	 * @param string $cip
 	 * @return Product
 	 */
-	public function setCodecip($codecip) {
-		$this->codecip = $codecip;
+	public function setCip($cip) {
+		$this->cip = $cip;
 
 		return $this;
 	}
@@ -127,16 +104,16 @@ class Product {
 	/**
 	 * @return mixed
 	 */
-	public function getDesignation() {
-		return $this->designation;
+	public function getName() {
+		return $this->name;
 	}
 
 	/**
-	 * @param mixed $designation
+	 * @param mixed $name
 	 * @return Product
 	 */
-	public function setDesignation($designation) {
-		$this->designation = $designation;
+	public function setName($name) {
+		$this->name = $name;
 
 		return $this;
 	}
@@ -161,16 +138,26 @@ class Product {
 	/**
 	 * @return int
 	 */
-	public function getInventaire() {
-		return $this->inventaire;
+	public function getInventory() {
+		return $this->inventory;
 	}
 
 	/**
-	 * @param int $inventaire
+	 * @param int $inventory
 	 * @return Product
 	 */
-	public function setInventaire($inventaire) {
-		$this->inventaire = $inventaire;
+	public function setInventory($inventory) {
+		$this->inventory = $inventory;
+
+		return $this;
+	}
+
+	/**
+	 * @param int $inventory
+	 * @return Product
+	 */
+	public function addInventory($inventory) {
+		$this->inventory += $inventory;
 
 		return $this;
 	}

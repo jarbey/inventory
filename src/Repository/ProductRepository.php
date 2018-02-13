@@ -12,11 +12,21 @@ class ProductRepository extends ServiceEntityRepository {
 	}
 
 	/**
-	 * @param $ean
+	 * @param Product $product
+	 * @param bool $increase_inventory
 	 * @return Product
 	 */
-	public function getFromEan($ean) {
-		return $this->createNativeNamedQuery('getFromEan')->setParameter('code', (int)$ean)->getSingleResult();
+	public function setOrUpdateProduct(Product $product, $increase_inventory = true) {
+		/** @var Product $existing_product */
+		$existing_product = $this->find($product->getId());
+		if ($existing_product == null) {
+			$this->getEntityManager()->persist($product);
+			$this->getEntityManager()->flush($product);
+			return $product;
+		} else if ($increase_inventory) {
+			$existing_product->addInventory($product->getInventory());
+		}
+		return $existing_product;
 	}
 
 }

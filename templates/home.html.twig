@@ -4,6 +4,59 @@
 	<div id="ws-content-receiver">
 		Connecting...
 	</div>
+
+	<div class="row">
+		<div class="col">
+			<div class="card text-white bg-success" id="card_state">
+				<div class="card-header">
+					<div class="card-body">
+						<div class="row">
+							<div class="col">
+								<i class="fa fa-medkit fa-5x"></i>
+							</div>
+							<div class="col text-right">
+								<div class="huge" id="product_name">???</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<div class="card text-white bg-success" id="card_factory_state">
+				<div class="card-header">
+					<div class="card-body">
+						<div class="row">
+							<div class="col">
+								<i class="fa fa-industry fa-5x"></i>
+							</div>
+							<div class="col text-right">
+								<div class="huge" id="product_stock">???</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="card text-white bg-warning" id="inventory_state">
+				<div class="card-header">
+					<div class="card-body">
+						<div class="row">
+							<div class="col">
+								<i class="fa fa-check-square fa-5x" id="card_icon"></i>
+							</div>
+							<div class="col text-right">
+								<div class="huge" id="product_inventory">???</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
 
 {% block javascripts %}
@@ -20,10 +73,14 @@
 
 			ws.onmessage = function (event) {
 				try {
-					var product = JSON.parse(event.data);
-					console.log(product);
+					var server_message = JSON.parse(event.data);
+					console.log(server_message);
 
-					_receiver.innerHTML = event.data;
+					if (server_message.state != '') {
+						_receiver.innerHTML = server_message.state;
+					} else if (server_message.codecip != '') {
+						displayProduct(server_message);
+					}
 				} catch (error) {
 					console.log(error);
 				}
@@ -35,5 +92,11 @@
 			ws.onerror = function () {
 			};
 		})();
+
+		function displayProduct(product) {
+			$('#product_name').html(product.name);
+			$('#product_stock').html(product.stock);
+			$('#product_inventory').html(product.inventory);
+		}
 	</script>
 {% endblock %}
