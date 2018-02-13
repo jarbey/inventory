@@ -7,7 +7,7 @@
 
 	<div class="row">
 		<div class="col">
-			<div class="card text-white bg-success" id="card_state">
+			<div class="card" id="card_state">
 				<div class="card-header">
 					<div class="card-body">
 						<div class="row">
@@ -24,8 +24,11 @@
 		</div>
 	</div>
 	<div class="row">
+		<div class="col">&nbsp;</div>
+	</div>
+	<div class="row">
 		<div class="col">
-			<div class="card text-white bg-success" id="card_factory_state">
+			<div class="card" id="card_factory_state">
 				<div class="card-header">
 					<div class="card-body">
 						<div class="row">
@@ -97,6 +100,8 @@
 			$('#product_name').html(product.name);
 			$('#product_stock').html(product.stock);
 			$('#product_inventory').html(product.inventory);
+
+			$('#inventory_state').removeClass().addClass("card text-white").addClass((product.inventory != product.stock) ? 'bg-danger' : 'bg-success');
 		}
 	</script>
 {% endblock %}
