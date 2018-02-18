@@ -64,11 +64,11 @@
 	</div>
 
 	<!-- Modal -->
-	<div class="modal fade" id="modalInventory" tabindex="-1" role="dialog" aria-labelledby="modalInventoryTitle" aria-hidden="true">
+	<div class="modal fade" id="modalInventory" tabindex="-1" role="dialog" aria-labelledby="modalInventoryTitle" aria-hidden="true" style="cursor: pointer">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalInventoryTitle">Chnager l'inventaire</h5>
+					<h5 class="modal-title" id="modalInventoryTitle">Changer l'inventaire</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -88,12 +88,15 @@
 
 {% block javascripts %}
 	<script type="text/javascript">
-		var ws = nul;
+		var ws = null;
+		var audioOK, audioKO, audioStock = null;
 
 		(function () {
 			'use strict';
-
 			connectWebSocket();
+			audioOK = new Audio('ok.wav');
+			audioKO = new Audio('ko.wav');
+			audioStock = new Audio('stock.wav');
 		})();
 
 		function connectWebSocket() {
@@ -114,6 +117,14 @@
 						_receiver.innerHTML = server_message.state;
 					} else if (server_message.cip != '') {
 						displayProduct(server_message);
+
+						if (server_message.stock == server_message.inentory) {
+							audioOK.play();
+						} else {
+							audioKO.play();
+						}
+					} else {
+						audioStock.play();
 					}
 				} catch (error) {
 					console.log(error);
