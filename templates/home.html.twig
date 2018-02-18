@@ -7,7 +7,7 @@
 				<div class="card-header">
 					<div class="card-body">
 						<div class="row">
-							<div class="col">
+							<div class="col-2">
 								<i class="fa fa-medkit icon-huge"></i>
 							</div>
 							<div class="col-10 text-right">
@@ -40,7 +40,7 @@
 			</div>
 		</div>
 		<div class="col">
-			<div class="card text-white bg-warning" id="inventory_state">
+			<div class="card text-white bg-warning" id="inventory_state" data-toggle="modal" data-target="#modalInventory">
 				<div class="card-header">
 					<div class="card-body">
 						<div class="row">
@@ -62,10 +62,34 @@
 	<div class="row" id="ws-content-receiver">
 		Connecting...
 	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="modalInventory" tabindex="-1" role="dialog" aria-labelledby="modalInventoryTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalInventoryTitle">Chnager l'inventaire</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					...
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+					<button type="button" class="btn btn-primary">Modifier</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 {% endblock %}
 
 {% block javascripts %}
 	<script type="text/javascript">
+		var ws = nul;
+
 		(function () {
 			'use strict';
 
@@ -74,7 +98,7 @@
 
 		function connectWebSocket() {
 			console.log('Connect to {{ ws_url }}');
-			var ws = new WebSocket('ws://{{ ws_url }}');
+			ws = new WebSocket('ws://{{ ws_url }}');
 			var _receiver = document.getElementById('ws-content-receiver');
 
 			ws.onopen = function () {
@@ -103,6 +127,10 @@
 
 			ws.onerror = function () {
 			};
+		}
+
+		function updateProductStock(product_id, new_qty) {
+			ws.send('{\"id\":\"' + product_id + '\", \"action\":\"update_qty\", \"qty\":\"" + new_qty + "\"}');
 		}
 
 		function displayProduct(product) {
