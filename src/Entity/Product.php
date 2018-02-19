@@ -45,6 +45,7 @@ class Product {
 
 	/**
 	 * @var string
+	 * @Groups({"product"})
 	 */
 	private $action;
 
