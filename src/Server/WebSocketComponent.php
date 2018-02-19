@@ -98,8 +98,10 @@ class WebSocketComponent implements MessageComponentInterface {
 			if ($product != null) {
 				$product->setStock($message->qty);
 
-				$product = $this->saveProductAndGetMessage($product, ProductRepository::MODE_UPDATE_STOCK);
+				$product = $this->product_repository->setOrUpdateProduct($product, ProductRepository::MODE_UPDATE_STOCK);
 				$product->setAction(self::UPDATE_QTY);
+				$product = $this->saveProductAndGetMessage($product, ProductRepository::MODE_UPDATE_STOCK);
+
 				return $product;
 			} else {
 				// TODO : Manager error
