@@ -98,7 +98,10 @@ class WebSocketComponent implements MessageComponentInterface {
 			if ($product != null) {
 				$product->setStock($message->qty);
 
-				return $this->saveProductAndGetMessage($product);
+				/** @var Product $product_to_send */
+				$product_to_send = $this->saveProductAndGetMessage($product, ProductRepository::MODE_UPDATE_STOCK);
+				$product_to_send->setAction(self::UPDATE_QTY);
+				return $product_to_send;
 			} else {
 				// TODO : Manager error
 			}
@@ -113,7 +116,8 @@ class WebSocketComponent implements MessageComponentInterface {
 		if (isset($scanned_product->cip)) {
 			// SCAN ACTION
 			$this->logger->debug('CIP received : ' . $scanned_product->cip);
-			return $this->saveProductAndGetMessage(new Product($scanned_product->id, $scanned_product->cip, $scanned_product->name, $scanned_product->stock, $scanned_product->inventory));
+			return $this->saveProductAndGetMessage(new Product($scanned_product->id, $scanned_product->cip, $scanned_product->name, $scanned_product->stock, $scanned_product->inventory),
+				ProductRepository::MODE_INCREASE_INVENTORY);
 		}
 
 		// TODO : Manage error
@@ -143,10 +147,11 @@ class WebSocketComponent implements MessageComponentInterface {
 
 	/**
 	 * @param Product $product
+	 * @param int $mode
 	 * @return string
 	 */
-	private function saveProductAndGetMessage(Product $product) {
-		$product = $this->product_repository->setOrUpdateProduct($product);
+	private function saveProductAndGetMessage(Product $product, $mode = 0) {
+		$product = $this->product_repository->setOrUpdateProduct($product, $mode);
 
 		$broadcast_messaged = $this->serializer->serialize($product, 'json', SerializationContext::create()->setGroups(['product']));
 		$this->logger->debug('Message to send : ' . $broadcast_messaged);

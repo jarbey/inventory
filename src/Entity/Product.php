@@ -44,6 +44,11 @@ class Product {
 	private $stock;
 
 	/**
+	 * @var string
+	 */
+	private $action;
+
+	/**
 	 * @var integer
 	 *
 	 * @ORM\Column(type="integer")
@@ -161,4 +166,23 @@ class Product {
 
 		return $this;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getAction() {
+		return $this->action;
+	}
+
+	/**
+	 * @param string $action
+	 * @return Product
+	 */
+	public function setAction($action) {
+		$this->action = $action;
+
+		return $this;
+	}
+
+
 }
