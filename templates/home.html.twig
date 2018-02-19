@@ -141,7 +141,7 @@
 		}
 
 		function updateProductStock(product_id, new_qty) {
-			ws.send('{\"id\":\"' + product_id + '\", \"action\":\"update_qty\", \"qty\":\"" + new_qty + "\"}');
+			ws.send('{"id":"' + product_id + '", "action":"update_qty", "qty":"' + new_qty + '"}');
 		}
 
 		function displayProduct(product) {

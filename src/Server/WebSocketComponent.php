@@ -62,11 +62,11 @@ class WebSocketComponent implements MessageComponentInterface {
 
 	public function onMessage(ConnectionInterface $from, $message) {
 		$last_message = null;
-		$this->logger->info('Message received : ' . $message);
 
 		// Try to decode message
 		$server_message = json_decode($message);
 		if ($server_message != null) {
+			$this->logger->info('Message received : ' . $message);
 			if (isset($server_message->action)) {
 				switch ($server_message->action) {
 					case self::INVENTORY_SCAN:
@@ -76,14 +76,14 @@ class WebSocketComponent implements MessageComponentInterface {
 						$this->broadcastMessage($this->processUpdateQuantity($server_message), $from, true);
 						break;
 					default:
-						// TODO : Manage error
+						$this->logger->warning('Action unkonwn ' . $server_message->action);
 						break;
 				}
 			} else {
-				// TODO : Manage error
+				$this->logger->warning('No action attribute in ' . $message);
 			}
 		} else {
-			// TODO : Manage error
+			$this->logger->warning('Cannot decode json : ' . $message);
 		}
 	}
 
