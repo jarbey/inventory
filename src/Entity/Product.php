@@ -44,12 +44,6 @@ class Product {
 	private $stock;
 
 	/**
-	 * @var string
-	 * @Groups({"product"})
-	 */
-	private $action;
-
-	/**
 	 * @var integer
 	 *
 	 * @ORM\Column(type="integer")
@@ -164,23 +158,6 @@ class Product {
 	 */
 	public function addInventory($inventory) {
 		$this->inventory += $inventory;
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAction() {
-		return $this->action;
-	}
-
-	/**
-	 * @param string $action
-	 * @return Product
-	 */
-	public function setAction($action) {
-		$this->action = $action;
 
 		return $this;
 	}

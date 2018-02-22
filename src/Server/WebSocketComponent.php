@@ -8,6 +8,7 @@
 
 namespace App\Server;
 
+use App\Entity\Message;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
 use JMS\Serializer\SerializationContext;
@@ -70,10 +71,10 @@ class WebSocketComponent implements MessageComponentInterface {
 			if (isset($server_message->action)) {
 				switch ($server_message->action) {
 					case self::INVENTORY_SCAN:
-						$this->broadcastMessage($this->processInventoryScan($server_message), $from, true);
+						$this->broadcastMessage($this->processInventoryScan($server_message->result), $from, true);
 						break;
 					case self::UPDATE_QTY:
-						$this->broadcastMessage($this->processUpdateQuantity($server_message), $from, true);
+						$this->broadcastMessage($this->processUpdateQuantity($server_message->result), $from, true);
 						break;
 					default:
 						$this->logger->warning('Action unkonwn ' . $server_message->action);
@@ -99,26 +100,29 @@ class WebSocketComponent implements MessageComponentInterface {
 				$product->setStock($message->qty);
 
 				$product = $this->product_repository->setOrUpdateProduct($product, ProductRepository::MODE_UPDATE_STOCK);
-				$product->setAction(self::UPDATE_QTY);
-				$product = $this->saveProductAndGetMessage($product, ProductRepository::MODE_UPDATE_STOCK);
 
-				return $product;
+				$this->saveProduct($product, ProductRepository::MODE_UPDATE_STOCK);
+				return $this->getMessage($product, self::UPDATE_QTY);
 			} else {
 				// TODO : Manager error
 			}
 		}
+		return null;
 	}
 
 	/**
-	 * @param $message (json product)
+	 * @param $scanned_product (json result message)
 	 * @return null|string
 	 */
 	private function processInventoryScan($scanned_product) {
 		if (isset($scanned_product->cip)) {
 			// SCAN ACTION
 			$this->logger->debug('CIP received : ' . $scanned_product->cip);
-			return $this->saveProductAndGetMessage(new Product($scanned_product->id, $scanned_product->cip, $scanned_product->name, $scanned_product->stock, $scanned_product->inventory),
-				ProductRepository::MODE_INCREASE_INVENTORY);
+
+			$product = new Product($scanned_product->id, $scanned_product->cip, $scanned_product->name, $scanned_product->stock, $scanned_product->inventory);
+			$this->saveProduct($product, ProductRepository::MODE_INCREASE_INVENTORY);
+
+			return $this->getMessage($product, self::INVENTORY_SCAN);
 		}
 
 		// TODO : Manage error
@@ -149,10 +153,21 @@ class WebSocketComponent implements MessageComponentInterface {
 	/**
 	 * @param Product $product
 	 * @param int $mode
+	 * @return Product
+	 */
+	private function saveProduct(Product $product, $mode = 0) {
+		return $this->product_repository->setOrUpdateProduct($product, $mode);
+	}
+
+	/**
+	 * @param Product $product
+	 * @param string $action
 	 * @return string
 	 */
-	private function saveProductAndGetMessage(Product $product, $mode = 0) {
-		$product = $this->product_repository->setOrUpdateProduct($product, $mode);
+	private function getMessage(Product $product, $action) {
+		$message = new Message();
+		$message->setAction($action);
+		$message->setResult($product);
 
 		$broadcast_messaged = $this->serializer->serialize($product, 'json', SerializationContext::create()->setGroups(['product']));
 		$this->logger->debug('Message to send : ' . $broadcast_messaged);
