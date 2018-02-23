@@ -40,7 +40,7 @@
 			</div>
 		</div>
 		<div class="col">
-			<div class="card text-white bg-warning" id="inventory_state" data-toggle="modal" data-target="#modalInventory">
+			<div class="card text-white bg-warning" id="inventory_state" data-toggle="modal">
 				<div class="card-header">
 					<div class="card-body">
 						<div class="row">
@@ -63,27 +63,6 @@
 		Connecting...
 	</div>
 
-	<!-- Modal -->
-	<div class="modal fade" id="modalInventory" tabindex="-1" role="dialog" aria-labelledby="modalInventoryTitle" aria-hidden="true" style="cursor: pointer">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="modalInventoryTitle">Changer l'inventaire</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					...
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-					<button type="button" class="btn btn-primary">Modifier</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
 {% endblock %}
 
 {% block javascripts %}
@@ -98,8 +77,12 @@
 			audioKO = new Audio('ko.wav');
 			audioStock = new Audio('stock.wav');
 
-			$('.card_factory_state').click(function() {
+			$('#card_factory_state').click(function() {
 				search("ixp");
+			});
+
+			$('#inventory_state').click(function() {
+				$(this).numpad();
 			});
 		})();
 
@@ -127,9 +110,6 @@
 								displayProduct(product);
 
 								// Play sound
-								audioOK.src = 'ok.wav';
-								audioOK.play();
-
 								((product.stock == product.inventory) ? audioOK : audioKO).play();
 							} else {
 								audioStock.play();
