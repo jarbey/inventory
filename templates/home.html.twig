@@ -127,6 +127,9 @@
 								displayProduct(product);
 
 								// Play sound
+								audioOK.src = 'ok.wav';
+								audioOK.play();
+
 								((product.stock == product.inventory) ? audioOK : audioKO).play();
 							} else {
 								audioStock.play();
