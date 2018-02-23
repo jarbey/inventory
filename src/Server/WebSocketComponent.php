@@ -119,9 +119,8 @@ class WebSocketComponent implements MessageComponentInterface {
 			$this->logger->debug('CIP received : ' . $scanned_product->cip);
 
 			$product = new Product($scanned_product->id, $scanned_product->cip, $scanned_product->name, $scanned_product->stock, $scanned_product->inventory);
-			$this->saveProduct($product, ProductRepository::MODE_INCREASE_INVENTORY);
 
-			return $this->getMessage($product, self::INVENTORY_SCAN);
+			return $this->getMessage($this->saveProduct($product, ProductRepository::MODE_INCREASE_INVENTORY), self::INVENTORY_SCAN);
 		}
 
 		// TODO : Manage error

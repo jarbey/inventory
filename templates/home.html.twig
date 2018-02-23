@@ -99,7 +99,7 @@
 			audioStock = new Audio('stock.wav');
 
 			$('.card_factory_state').click(function() {
-				ws.search("ixp");
+				search("ixp");
 			});
 		})();
 
@@ -153,7 +153,7 @@
 		}
 
 		function search(term) {
-			ws.send('{"action":"search", "description":"' + term + '"}}');
+			ws.send('{"action":"search", "description":"' + term + '"}');
 		}
 
 		function updateProductStock(product_id, new_qty) {
