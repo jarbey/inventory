@@ -169,7 +169,7 @@ class WebSocketComponent implements MessageComponentInterface {
 		$message->setAction($action);
 		$message->setResult($product);
 
-		$broadcast_messaged = $this->serializer->serialize($product, 'json', SerializationContext::create()->setGroups(['product']));
+		$broadcast_messaged = $this->serializer->serialize($message, 'json', SerializationContext::create()->setGroups(['product']));
 		$this->logger->debug('Message to send : ' . $broadcast_messaged);
 		return $broadcast_messaged;
 	}
