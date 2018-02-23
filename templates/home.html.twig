@@ -97,6 +97,10 @@
 			audioOK = new Audio('ok.wav');
 			audioKO = new Audio('ko.wav');
 			audioStock = new Audio('stock.wav');
+
+			$('.card_factory_state').click(function() {
+				ws.search("ixp");
+			});
 		})();
 
 		function connectWebSocket() {
@@ -119,7 +123,7 @@
 							break;
 						case 'inventory_scan':
 							if (server_message.cip != '') {
-								displayProduct(server_message);
+								displayProduct(server_message.result);
 
 								if (server_message.stock == server_message.inentory) {
 									audioOK.play();
@@ -146,6 +150,10 @@
 
 			ws.onerror = function () {
 			};
+		}
+
+		function search(term) {
+			ws.send('{"action":"search", "description":"' + term + '"}}');
 		}
 
 		function updateProductStock(product_id, new_qty) {

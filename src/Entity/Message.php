@@ -15,6 +15,13 @@ class Message {
 	private $action;
 
 	/**
+	 * @var string
+	 *
+	 * @Groups({"product"})
+	 */
+	private $description;
+
+	/**
 	 * @var Product
 	 *
 	 * @Groups({"product"})
@@ -75,6 +82,23 @@ class Message {
 	 */
 	public function setResults($results) {
 		$this->results = $results;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDescription() {
+		return $this->description;
+	}
+
+	/**
+	 * @param string $description
+	 * @return Message
+	 */
+	public function setDescription($description) {
+		$this->description = $description;
 
 		return $this;
 	}
