@@ -58,7 +58,6 @@ class WebSocketComponent implements MessageComponentInterface {
 
 	public function onError(ConnectionInterface $conn, \Exception $e) {
 		$this->logger->info('An error has occurred: ' . $e->getMessage());
-		$conn->send('An error has occurred: ' . $e->getMessage());
 	}
 
 	public function onMessage(ConnectionInterface $from, $message) {
@@ -170,7 +169,7 @@ class WebSocketComponent implements MessageComponentInterface {
 		$message->setResult($product);
 
 		$broadcast_messaged = $this->serializer->serialize($message, 'json', SerializationContext::create()->setGroups(['product']));
-		$this->logger->debug('Message to send : ' . $broadcast_messaged);
+		$this->logger->info('Message to send : ' . $broadcast_messaged);
 		return $broadcast_messaged;
 	}
 
