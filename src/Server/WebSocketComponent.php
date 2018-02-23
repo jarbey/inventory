@@ -77,6 +77,7 @@ class WebSocketComponent implements MessageComponentInterface {
 						break;
 					default:
 						$this->logger->warning('Action unkonwn ' . $server_message->action);
+						$this->broadcastMessage($message, $from, false);
 						break;
 				}
 			} else {

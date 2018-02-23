@@ -123,13 +123,11 @@
 							break;
 						case 'inventory_scan':
 							if (server_message.cip != '') {
-								displayProduct(server_message.result);
+								var product = server_message.result;
+								displayProduct(product);
 
-								if (server_message.stock == server_message.inentory) {
-									audioOK.play();
-								} else {
-									audioKO.play();
-								}
+								// Play sound
+								((product.stock == product.inentory) ? audioOK : audioKO).play();
 							} else {
 								audioStock.play();
 							}
