@@ -91,7 +91,11 @@
 				search("ixp");
 			});
 
-			$('#inventory_state').numpad();
+			$('#inventory_state').numpad({
+				onKeypadOpen: function(){
+					$(this).find('.nmpd-display').val($('#product_inventory').val() + 1);
+				}
+			});
 		})();
 
 		function connectWebSocket() {
