@@ -68,7 +68,7 @@
 {% block javascripts %}
 	<script type="text/javascript">
 		var ws = null;
-		var product_id = null;
+		var product = null;
 		var audioOK, audioKO, audioStock = null;
 
 		(function () {
@@ -99,7 +99,7 @@
 				textClear: 'Effacer',
 				textDelete: 'Suppr <=',
 				onKeypadClose: function(){
-					updateProductStock(product_id, $(this).find('.nmpd-display').val());
+					product.inventory = $(this).find('.nmpd-display').val();
 				}
 			});
 		})();
@@ -123,11 +123,10 @@
 							break;
 						case 'inventory_scan':
 							if (server_message.cip != '') {
-								var product = server_message.result;
-								product_id = product.id;
+								product = server_message.result;
 
 								// Display product info
-								displayProduct(product);
+								displayProduct();
 
 								// Play sound
 								((product.stock == product.inventory) ? audioOK : audioKO).play();
@@ -157,11 +156,15 @@
 			ws.send('{"action":"search", "description":"' + term + '"}');
 		}
 
-		function updateProductStock(product_id, new_qty) {
-			ws.send('{"action":"update_qty", "result":{"id":"' + product_id + '", "qty":"' + new_qty + '"}}');
+		function updateInventory() {
+			ws.send('{"action":"inventory_scan", "result":{"id":"' + product.id + '", "cip":"' + product.cip + '", "name":"' + product.name + '", "stock":"' + product.stock + '", "inventory":"' + product.inventory + '"}}');
 		}
 
-		function displayProduct(product) {
+		function updateProductStock() {
+			ws.send('{"action":"update_qty", "result":{"id":"' + product.id + '", "qty":"' + product.inventory + '"}}');
+		}
+
+		function displayProduct() {
 			$('#product_name').html(product.name);
 			$('#product_stock').html(product.stock);
 			$('#product_inventory').html(product.inventory);
