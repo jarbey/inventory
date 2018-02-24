@@ -72,6 +72,16 @@
 
 		(function () {
 			'use strict';
+
+			// Set NumPad defaults for jQuery mobile.
+			// These defaults will be applied to all NumPads within this document!
+			$.fn.numpad.defaults.gridTpl = '<table class="table modal-content"></table>';
+			$.fn.numpad.defaults.backgroundTpl = '<div class="modal-backdrop in"></div>';
+			$.fn.numpad.defaults.displayTpl = '<input type="text" class="form-control  input-lg" />';
+			$.fn.numpad.defaults.buttonNumberTpl =  '<button type="button" class="btn btn-default btn-lg"></button>';
+			$.fn.numpad.defaults.buttonFunctionTpl = '<button type="button" class="btn btn-lg" style="width: 100%;"></button>';
+			$.fn.numpad.defaults.onKeypadCreate = function(){$(this).find('.done').addClass('btn-primary');};
+
 			connectWebSocket();
 			audioOK = new Audio('ok.wav');
 			audioKO = new Audio('ko.wav');
