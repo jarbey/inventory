@@ -92,7 +92,14 @@
 			});
 
 			$('#inventory_state').numpad({
-				target: $('#product_inventory')
+				target: $('#product_inventory'),
+				textDone: 'Modifier',
+				textCancel: 'Annuler',
+				textClear: 'Effacer',
+				textDelete: 'Suppr <=',
+				onKeypadClose: function(){
+					console.log('Value', $(this).find('.nmpd-display'));
+				}
 			});
 		})();
 
