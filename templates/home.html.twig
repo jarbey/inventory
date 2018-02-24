@@ -98,7 +98,7 @@
 				textClear: 'Effacer',
 				textDelete: 'Suppr <=',
 				onKeypadClose: function(){
-					console.log('Value', $(this).find('.nmpd-display'));
+					updateProductStock(product_id, $(this).find('.nmpd-display').val());
 				}
 			});
 		})();
@@ -107,6 +107,7 @@
 			console.log('Connect to {{ ws_url }}');
 			ws = new WebSocket('ws://{{ ws_url }}');
 			var _receiver = document.getElementById('ws-content-receiver');
+			var product_id = null;
 
 			ws.onopen = function () {
 				_receiver.innerHTML = 'Connected !';
@@ -124,6 +125,9 @@
 						case 'inventory_scan':
 							if (server_message.cip != '') {
 								var product = server_message.result;
+								product_id = product.id;
+
+								// Display product info
 								displayProduct(product);
 
 								// Play sound
