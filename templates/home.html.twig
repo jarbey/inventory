@@ -92,9 +92,7 @@
 			});
 
 			$('#inventory_state').numpad({
-				onKeypadOpen: function(){
-					$(this).find('.nmpd-display').val($('#product_inventory').val() + 1);
-				}
+				target: $('#product_inventory')
 			});
 		})();
 
