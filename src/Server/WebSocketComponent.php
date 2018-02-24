@@ -19,6 +19,7 @@ use Ratchet\MessageComponentInterface;
 
 class WebSocketComponent implements MessageComponentInterface {
 	const INVENTORY_SCAN = 'inventory_scan';
+	const UPDATE_INVENTORY_SCAN = 'update_inventory_scan';
 	const UPDATE_QTY = 'update_qty';
 
 	/** @var \SplObjectStorage */
@@ -70,7 +71,10 @@ class WebSocketComponent implements MessageComponentInterface {
 			if (isset($server_message->action)) {
 				switch ($server_message->action) {
 					case self::INVENTORY_SCAN:
-						$this->broadcastMessage($this->processInventoryScan($server_message->result), $from, true);
+						$this->broadcastMessage($this->processInventoryScan($server_message->result, ProductRepository::MODE_INCREASE_INVENTORY), $from, true);
+						break;
+					case self::UPDATE_INVENTORY_SCAN:
+						$this->broadcastMessage($this->processInventoryScan($server_message->result, ProductRepository::MODE_SET_INVENTORY), $from, true);
 						break;
 					case self::UPDATE_QTY:
 						$this->broadcastMessage($this->processUpdateQuantity($server_message->result), $from, true);
@@ -112,16 +116,17 @@ class WebSocketComponent implements MessageComponentInterface {
 
 	/**
 	 * @param $scanned_product (json result message)
+	 * @param int $mode
 	 * @return null|string
 	 */
-	private function processInventoryScan($scanned_product) {
+	private function processInventoryScan($scanned_product, $mode = ProductRepository::MODE_INCREASE_INVENTORY) {
 		if (isset($scanned_product->cip)) {
 			// SCAN ACTION
 			$this->logger->debug('CIP received : ' . $scanned_product->cip);
 
 			$product = new Product($scanned_product->id, $scanned_product->cip, $scanned_product->name, $scanned_product->stock, $scanned_product->inventory);
 
-			return $this->getMessage($this->saveProduct($product, ProductRepository::MODE_INCREASE_INVENTORY), self::INVENTORY_SCAN);
+			return $this->getMessage($this->saveProduct($product, $mode), self::INVENTORY_SCAN);
 		}
 
 		// TODO : Manage error

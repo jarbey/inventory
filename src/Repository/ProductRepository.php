@@ -8,7 +8,8 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ProductRepository extends ServiceEntityRepository {
 	const MODE_INCREASE_INVENTORY = 1;
-	const MODE_UPDATE_STOCK = 2;
+	const MODE_SET_INVENTORY = 2;
+	const MODE_UPDATE_STOCK = 4;
 
 	public function __construct(RegistryInterface $registry) {
 		parent::__construct($registry, Product::class);
@@ -29,7 +30,11 @@ class ProductRepository extends ServiceEntityRepository {
 		} else {
 			if ($mode & self::MODE_INCREASE_INVENTORY) {
 				$existing_product->addInventory($product->getInventory());
-			} else if ($mode & self::MODE_UPDATE_STOCK) {
+			} else if ($mode & self::MODE_SET_INVENTORY) {
+				$existing_product->setInventory($product->getInventory());
+			}
+
+			if ($mode & self::MODE_UPDATE_STOCK) {
 				$existing_product->setStock($product->getStock());
 			}
 
