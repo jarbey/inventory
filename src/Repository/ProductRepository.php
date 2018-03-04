@@ -55,7 +55,7 @@ class ProductRepository extends ServiceEntityRepository {
 	 * @return Product[]
 	 */
 	public function getInventoryHistory($count = 10, $offset = 0) {
-		return $this->findBy([], ['date' => Criteria::DESC, $count, $offset]);
+		return $this->findBy([], ['date' => Criteria::DESC], $count, $offset);
 	}
 
 }

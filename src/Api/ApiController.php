@@ -50,7 +50,7 @@ class ApiController extends FOSRestController {
 	 */
 	public function getProductsAction() {
 		try {
-			$data = $this->product_repository->findAll();
+			$data = $this->product_repository->getInventoryHistory();
 
 			$api_result = new ApiResult(ApiResult::OK, '');
 			$api_result->setInfos($data);
