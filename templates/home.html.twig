@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+	<div class="row" id="ws-content-receiver">
+		Connecting...
+	</div>
+
+
 	<div class="row">
 		<div class="col">
 			<div class="card" id="card_state">
@@ -59,8 +65,40 @@
 	<div class="row">
 		<div class="col">&nbsp;</div>
 	</div>
-	<div class="row" id="ws-content-receiver">
-		Connecting...
+	<div class="row">
+		<div class="col">
+			<table id="inventory_history" class="display" cellspacing="0" width="100%">
+				<thead>
+				<tr>
+					<th>Date</th>
+					<th>CIP</th>
+					<th>Description</th>
+					<th>Stock</th>
+					<th>Inventaire</th>
+				</tr>
+				</thead>
+				<tfoot>
+				<tr>
+					<th>Date</th>
+					<th>CIP</th>
+					<th>Description</th>
+					<th>Stock</th>
+					<th>Inventaire</th>
+				</tr>
+				</tfoot>
+				<tbody>
+				{% foreach product in product_history %}
+				<tr>
+					<td>{{ product.date|date('d/m/Y H:i:s') }}</td>
+					<td>{{ product.cip }}</td>
+					<td>{{ product.name }}</td>
+					<td>{{ product.stock }}</td>
+					<td>{{ product.inventory }}</td>
+				</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
 	</div>
 
 {% endblock %}
@@ -103,6 +141,34 @@
 					updateInventory();
 				}
 			});
+
+			$(document).ready(function() {
+				$('#inventory_history').DataTable(mergeOptions(
+					getPagerServerDataTablesDefaultOptions('/api/inventory/current/products',
+						function (entry) {
+							//
+						},
+						null,
+						function () {
+							return {
+								sort: 'date',
+								order: 'desc',
+								view: ''
+							};
+						}
+					), {
+						buttons : [],
+						columns: [
+							{data: 'date', sortable: false},
+							{data: 'cip', sortable: false},
+							{data: 'name', sortable: false},
+							{data: 'stock', sortable: false},
+							{data: 'inventory', sortable: false},
+						],
+						iDisplayLength: 25,
+					}
+				));
+			} );
 		})();
 
 		function connectWebSocket() {

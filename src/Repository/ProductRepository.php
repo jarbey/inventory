@@ -4,12 +4,13 @@ namespace App\Repository;
 
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ProductRepository extends ServiceEntityRepository {
-	const MODE_INCREASE_INVENTORY = 1;
-	const MODE_SET_INVENTORY = 2;
-	const MODE_UPDATE_STOCK = 4;
+	const INVENTORY_INCREASE = 1;
+	const INVENTORY_SET = 2;
+	const STOCK_UPDATE = 4;
 
 	public function __construct(RegistryInterface $registry) {
 		parent::__construct($registry, Product::class);
@@ -28,19 +29,33 @@ class ProductRepository extends ServiceEntityRepository {
 			$this->getEntityManager()->flush($product);
 			return $product;
 		} else {
-			if ($mode & self::MODE_INCREASE_INVENTORY) {
+			// Update inventory
+			if ($mode & self::INVENTORY_INCREASE) {
 				$existing_product->addInventory($product->getInventory());
-			} else if ($mode & self::MODE_SET_INVENTORY) {
+			} else if ($mode & self::INVENTORY_SET) {
 				$existing_product->setInventory($product->getInventory());
 			}
 
-			if ($mode & self::MODE_UPDATE_STOCK) {
+			// Update stock
+			if ($mode & self::STOCK_UPDATE) {
 				$existing_product->setStock($product->getStock());
 			}
+
+			// Update date
+			$existing_product->setDate(new \DateTime());
 
 			$this->getEntityManager()->flush($existing_product);
 			return $existing_product;
 		}
+	}
+
+	/**
+	 * @param int $count
+	 * @param int $offset
+	 * @return Product[]
+	 */
+	public function getInventoryHistory($count = 10, $offset = 0) {
+		return $this->findBy([], ['date' => Criteria::DESC, $count, $offset]);
 	}
 
 }

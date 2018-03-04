@@ -52,6 +52,14 @@ class Product {
 	private $inventory = 1;
 
 	/**
+	 * @var \DateTime
+	 *
+	 * @ORM\Column(type="datetime")
+	 * @Groups({"product"})
+	 */
+	private $date;
+
+	/**
 	 * Product constructor.
 	 * @param int $id
 	 * @param string $cip
@@ -65,6 +73,7 @@ class Product {
 		$this->name = $name;
 		$this->stock = $stock;
 		$this->inventory = $inventory;
+		$this->date = new \DateTime();
 	}
 
 	/**
@@ -162,5 +171,21 @@ class Product {
 		return $this;
 	}
 
+	/**
+	 * @return \DateTime
+	 */
+	public function getDate() {
+		return $this->date;
+	}
+
+	/**
+	 * @param \DateTime $date
+	 * @return Product
+	 */
+	public function setDate($date) {
+		$this->date = $date;
+
+		return $this;
+	}
 
 }

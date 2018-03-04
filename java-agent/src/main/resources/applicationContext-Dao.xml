@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+	<!-- Import of Application Context with import of all properties -->
+	<import resource="applicationContext-Commons.xml" />
+	
+	<bean id="dataSourceLGPIJDBC" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${lgpijdbc.driverClassName}" />
+		<property name="url" value="${lgpijdbc.url}" />
+		<property name="username" value="${lgpijdbc.username}" />
+		<property name="password" value="${lgpijdbc.password}" />
+
+		<property name="initialSize" value="${lgpijdbc.initialSize}" />
+		<!--
+			The initial number of connections that are created when the pool is
+			started.
+		-->
+		<property name="maxActive" value="${lgpijdbc.maxActive}" />
+		<!--
+			The maximum number of active connections that can be allocated from this pool at the same time,
+			or negative for no limit.
+		-->
+		<property name="maxIdle" value="${lgpijdbc.maxIdle}" />
+		<!--
+			The maximum number of connections that can remain idle in the pool, without extra ones being
+			released, or negative for no limit.
+		-->
+		<property name="minIdle" value="${lgpijdbc.minIdle}" />
+		<!--
+			The minimum number of connections that can remain idle in the pool, without extra ones being
+			created, or zero to create none.
+		-->
+		<property name="maxWait" value="-1" />
+		<!--
+			The maximum number of milliseconds that the pool will wait (when there are no available
+			connections) for a connection to be returned before throwing an exception, or -1 to wait
+			indefinitely.
+		-->
+	</bean>
+
+	<bean id="jdbcTemplateLGPI" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
+		<constructor-arg>
+			<ref bean="dataSourceLGPIJDBC" />
+		</constructor-arg>
+	</bean>
+	
+	<bean id="LGPIDao" class="fr.pharmaciepouvreau.inventaire.dao.LGPIDao">
+		<property name="simpleJdbcTemplate" ref="jdbcTemplateLGPI" />
+	</bean>
+</beans>
