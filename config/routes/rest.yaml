@@ -1,0 +1,4 @@
+audits:
+    type:     rest
+    resource: '../src/Api'
+    prefix:  /api
