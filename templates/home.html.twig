@@ -130,7 +130,7 @@
 				textDelete: 'Suppr <=',
 				onKeypadClose: function(){
 					current_product.inventory = $(this).find('.nmpd-display').val();
-					updateInventory(current_product);
+					updateInventory(current_product, true);
 				}
 			});
 
@@ -216,14 +216,16 @@
 			ws.send('{"action":"search", "description":"' + term + '"}');
 		}
 
-		function updateInventory(product) {
+		function updateInventory(product, update_server_inventory) {
 			// Display product info
 			displayProduct(product);
 
 			// Play sound
 			((product.stock == product.inventory) ? audioOK : audioKO).play();
 
-			ws.send('{"action":"update_inventory_scan", "result":{"id":"' + product.id + '", "cip":"' + product.cip + '", "name":"' + product.name + '", "stock":"' + product.stock + '", "inventory":"' + product.inventory + '"}}');
+			if (update_server_inventory) {
+				ws.send('{"action":"update_inventory_scan", "result":{"id":"' + product.id + '", "cip":"' + product.cip + '", "name":"' + product.name + '", "stock":"' + product.stock + '", "inventory":"' + product.inventory + '"}}');
+			}
 
 			history_table.ajax.reload();
 		}
