@@ -103,7 +103,7 @@ class WebSocketComponent implements MessageComponentInterface {
 			if ($product != null) {
 				$product->setStock($message->qty);
 
-				$product = $this->product_repository->setOrUpdateProduct($product, ProductRepository::MODE_UPDATE_STOCK);
+				$product = $this->product_repository->setOrUpdateProduct($product, ProductRepository::STOCK_UPDATE);
 
 				return $this->getMessage($product, self::UPDATE_STOCK);
 			} else {

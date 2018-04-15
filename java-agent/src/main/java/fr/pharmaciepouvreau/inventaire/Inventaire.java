@@ -14,7 +14,7 @@ import fr.pharmaciepouvreau.inventaire.dto.Message;
 import fr.pharmaciepouvreau.inventaire.dto.Produit;
 
 public class Inventaire {
-	private static final String UPDATE_QTY_ACTION = "update_qty";
+	private static final String UPDATE_STOCK = "update_stock";
 	private static final String SEARCH_ACTION = "search";
 	private static final String INVENTORY_SCAN = "inventory_scan";
 
@@ -38,10 +38,10 @@ public class Inventaire {
 					Message<Produit> message = (Message<Produit>) GSON.fromJson(content, Message.class);
 					if (message.getAction() != null) {
 						switch (message.getAction()) {
-						case UPDATE_QTY_ACTION:
+						case UPDATE_STOCK:
 							Produit product = ((Produit) message.getResult());
-							System.out.println("Update qty for " + product.getId() + " => " + product.getStock());
-							// DAOFactory.getLGPIDao().updateStockProduit(product);
+							System.out.println("Update stock for " + product.getId() + " => " + product.getStock());
+							DAOFactory.getLGPIDao().updateStockProduit(product);
 							break;
 						case SEARCH_ACTION:
 							List<Produit> results = DAOFactory.getLGPIDao().searchProduit(message.getDescription());
@@ -73,6 +73,9 @@ public class Inventaire {
 	 */
 	public static void main(String[] args) throws IOException {
 		connectWebSocketServer();
+		
+		// Connect to oracle datasource
+		DAOFactory.getLGPIDao().getProduit("666");
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		Produit produit = null;
