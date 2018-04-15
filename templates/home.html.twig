@@ -97,7 +97,7 @@
 {% block javascripts %}
 	<script type="text/javascript">
 		var ws = null;
-		var product = null;
+		var current_product = null;
 		var audioOK, audioKO, audioStock = null;
 		var history_table = null;
 
@@ -119,7 +119,7 @@
 			audioStock = new Audio('stock.wav');
 
 			$('#card_factory_state').click(function() {
-				search("ixp");
+				updateProductStock(current_product);
 			});
 
 			$('#inventory_state').numpad({
@@ -129,8 +129,8 @@
 				textClear: 'Effacer',
 				textDelete: 'Suppr <=',
 				onKeypadClose: function(){
-					product.inventory = $(this).find('.nmpd-display').val();
-					updateInventory();
+					current_product.inventory = $(this).find('.nmpd-display').val();
+					updateInventory(current_product);
 				}
 			});
 
@@ -188,7 +188,8 @@
 							break;
 						case 'inventory_scan':
 							if (server_message.cip != '') {
-								updateInventory(server_message.result, false);
+								current_product = server_message.result;
+								updateInventory(current_product, false);
 							} else {
 								audioStock.play();
 							}
@@ -215,9 +216,9 @@
 			ws.send('{"action":"search", "description":"' + term + '"}');
 		}
 
-		function updateInventory(product, sendMessage) {
+		function updateInventory(product) {
 			// Display product info
-			displayProduct();
+			displayProduct(product);
 
 			// Play sound
 			((product.stock == product.inventory) ? audioOK : audioKO).play();
@@ -227,11 +228,11 @@
 			history_table.ajax.reload();
 		}
 
-		function updateProductStock() {
+		function updateProductStock(product) {
 			ws.send('{"action":"update_qty", "result":{"id":"' + product.id + '", "qty":"' + product.inventory + '"}}');
 		}
 
-		function displayProduct() {
+		function displayProduct(product) {
 			$('#product_name').html(product.name);
 			$('#product_stock').html(product.stock);
 			$('#product_inventory').html(product.inventory);
