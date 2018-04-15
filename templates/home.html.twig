@@ -229,7 +229,9 @@
 		}
 
 		function updateProductStock(product) {
-			ws.send('{"action":"update_qty", "result":{"id":"' + product.id + '", "qty":"' + product.inventory + '"}}');
+			product.stock = product.inventory;
+			ws.send('{"action":"update_stock", "result":{"id":"' + product.id + '", "qty":"' + product.inventory + '"}}');
+			updateInventory(product);
 		}
 
 		function displayProduct(product) {

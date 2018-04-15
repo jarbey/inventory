@@ -3,11 +3,13 @@ package fr.pharmaciepouvreau.inventaire;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import fr.pharmaciepouvreau.inventaire.dao.DAOFactory;
 import fr.pharmaciepouvreau.inventaire.dto.Message;
@@ -35,7 +37,8 @@ public class Inventaire {
 					// Console out the message
 					System.out.println("Message received : " + content);
 
-					Message<Produit> message = (Message<Produit>) GSON.fromJson(content, Message.class);
+					Type fooType = new TypeToken<Message<Produit>>() {}.getType();
+					Message<Produit> message = GSON.fromJson(content, fooType);
 					if (message.getAction() != null) {
 						switch (message.getAction()) {
 						case UPDATE_STOCK:
