@@ -99,6 +99,7 @@
 		var ws = null;
 		var product = null;
 		var audioOK, audioKO, audioStock = null;
+		var history_table = null;
 
 		(function () {
 			'use strict';
@@ -134,7 +135,7 @@
 			});
 
 			$(document).ready(function() {
-				$('#inventory_history').DataTable(mergeOptions(
+				history_table = $('#inventory_history').DataTable(mergeOptions(
 					getPagerServerDataTablesDefaultOptions('/api/inventory/current/products',
 						function (entry) {
 							//
@@ -150,7 +151,13 @@
 					), {
 						buttons : [],
 						columns: [
-							{data: 'date', sortable: false},
+							{
+								data: 'date',
+								sortable: false,
+								render: function (data, type, row, meta) {
+									return moment(new Date(data)).format("DD/MM/YYYY HH:mm:ss");
+								}
+							},
 							{data: 'cip', sortable: false},
 							{data: 'name', sortable: false},
 							{data: 'stock', sortable: false},
@@ -173,7 +180,7 @@
 			ws.onmessage = function (event) {
 				try {
 					var server_message = JSON.parse(event.data);
-					console.log(server_message);
+					console.log('WsMessage', server_message);
 
 					switch (server_message.action) {
 						case 'ready':
@@ -181,13 +188,7 @@
 							break;
 						case 'inventory_scan':
 							if (server_message.cip != '') {
-								product = server_message.result;
-
-								// Display product info
-								displayProduct();
-
-								// Play sound
-								((product.stock == product.inventory) ? audioOK : audioKO).play();
+								updateInventory(server_message.result, false);
 							} else {
 								audioStock.play();
 							}
@@ -214,8 +215,16 @@
 			ws.send('{"action":"search", "description":"' + term + '"}');
 		}
 
-		function updateInventory() {
+		function updateInventory(product, sendMessage) {
+			// Display product info
+			displayProduct();
+
+			// Play sound
+			((product.stock == product.inventory) ? audioOK : audioKO).play();
+
 			ws.send('{"action":"update_inventory_scan", "result":{"id":"' + product.id + '", "cip":"' + product.cip + '", "name":"' + product.name + '", "stock":"' + product.stock + '", "inventory":"' + product.inventory + '"}}');
+
+			history_table.ajax.reload();
 		}
 
 		function updateProductStock() {
