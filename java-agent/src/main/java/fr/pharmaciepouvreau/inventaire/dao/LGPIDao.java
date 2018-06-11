@@ -30,7 +30,12 @@ public class LGPIDao {
 				new MapSqlParameterSource(params), new ProduitMapper());
 
 		if (produits.size() > 0) {
-			return produits.get(0);
+			Produit pdt = produits.get(0);
+			if (pdt.getCip() == null) {
+				pdt.setCip(codecip);
+			}
+			
+			return pdt;
 		}
 
 		return null;

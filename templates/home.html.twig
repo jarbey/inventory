@@ -134,39 +134,41 @@
 				}
 			});
 
-			$(document).ready(function() {
-				history_table = $('#inventory_history').DataTable(mergeOptions(
-					getPagerServerDataTablesDefaultOptions('/api/inventory/current/products',
-						function (entry) {
-							//
-						},
-						null,
-						function () {
-							return {
-								sort: 'date',
-								order: 'desc',
-								view: ''
-							};
-						}
-					), {
-						buttons : [],
-						columns: [
-							{
-								data: 'date',
-								sortable: false,
-								render: function (data, type, row, meta) {
-									return moment(new Date(data)).format("DD/MM/YYYY HH:mm:ss");
-								}
-							},
-							{data: 'cip', sortable: false},
-							{data: 'name', sortable: false},
-							{data: 'stock', sortable: false},
-							{data: 'inventory', sortable: false},
-						],
-						iDisplayLength: 25,
+			$('#card_state').click(function() {
+				manualScan($('#inventory_history_filter').find('[type=search]').val());
+			});
+
+			history_table = $('#inventory_history').DataTable(mergeOptions(
+				getPagerServerDataTablesDefaultOptions('/api/inventory/current/products',
+					function (entry) {
+						//
+					},
+					null,
+					function () {
+						return {
+							sort: 'date',
+							order: 'desc',
+							view: ''
+						};
 					}
-				));
-			} );
+				), {
+					buttons : [],
+					columns: [
+						{
+							data: 'date',
+							sortable: false,
+							render: function (data, type, row, meta) {
+								return moment(new Date(data)).format("DD/MM/YYYY HH:mm:ss");
+							}
+						},
+						{data: 'cip', sortable: false},
+						{data: 'name', sortable: false},
+						{data: 'stock', sortable: false},
+						{data: 'inventory', sortable: false},
+					],
+					iDisplayLength: 25,
+				}
+			));
 		})();
 
 		function connectWebSocket() {
@@ -212,8 +214,8 @@
 			};
 		}
 
-		function search(term) {
-			ws.send('{"action":"search", "description":"' + term + '"}');
+		function manualScan(term) {
+			ws.send('{"action":"manual_scan", "description":"' + term + '"}');
 		}
 
 		function updateInventory(product, update_server_inventory) {

@@ -19,6 +19,7 @@ public class Inventaire {
 	private static final String UPDATE_STOCK = "update_stock";
 	private static final String SEARCH_ACTION = "search";
 	private static final String INVENTORY_SCAN = "inventory_scan";
+	private static final String MANUAL_SCAN = "manual_scan";
 
 	private static final String READY_STATE = "ready";
 
@@ -45,6 +46,15 @@ public class Inventaire {
 							Produit product = ((Produit) message.getResult());
 							System.out.println("Update stock for " + product.getId() + " => " + product.getStock());
 							DAOFactory.getLGPIDao().updateStockProduit(product);
+							break;
+						case MANUAL_SCAN:
+							System.out.println("Manual scan : " + message.getDescription());
+							Produit produit = DAOFactory.getLGPIDao().getProduit(message.getDescription());
+
+							Message<Produit> response_message = new Message<Produit>();
+							response_message.setAction(INVENTORY_SCAN);
+							response_message.setResult(produit);
+							clientEndPoint.sendMessage(GSON.toJson(response_message));
 							break;
 						case SEARCH_ACTION:
 							List<Produit> results = DAOFactory.getLGPIDao().searchProduit(message.getDescription());
@@ -88,7 +98,13 @@ public class Inventaire {
 		String data = "";
 		while (true) {
 			data = reader.readLine();
-			produit = DAOFactory.getLGPIDao().getProduit(getCode(data));
+			produit = DAOFactory.getLGPIDao().getProduit(getCode(data, false));
+			if (produit == null) {
+				String code = getCode(data, true);
+				if (code != null) {
+					produit = DAOFactory.getLGPIDao().getProduit(code);	
+				}
+			}
 			if (produit != null) {
 				// send message to websocket
 				if (clientEndPoint.getUserSession() == null) {
@@ -107,19 +123,25 @@ public class Inventaire {
 		}
 	}
 
-	private static String getCode(String code) {
+	private static String getCode(String code, Boolean sub_code) {
 		if (code.length() == 7) {
 			// Code CIP on le garde tel quel
 			return code;
 		} else if (code.length() == 13) {
 			// Code EAN on le garde tel quel
+			if (sub_code) {
+				return code.substring(4, 11);
+			}
 			return code;
 		} else if (code.length() == 16) {
 			// Il faut prendre le code cip après le premier chiffre
 			return code.substring(1, 8);
+		} else if (code.length() == 20) {
+			// EAN 13 + 7
+			return getCode(code.substring(0, 13), sub_code);
 		} else if (code.length() > 16) {
 			// Certainement un data matrix, on prend les 13 caractères après le troisième pour avoir le code ean
-			return code.substring(3, 16);
+			return getCode(code.substring(3, 16), sub_code);
 		}
 
 		// Sinon ??? On revoit le code par defaut
