@@ -2,8 +2,14 @@
 
 {% block body %}
 
-	<div class="row" id="ws-content-receiver">
-		Connecting...
+	<div class="row">
+		<div class="col" id="ws-content-receiver">
+			Connecting...
+		</div>
+
+		<div class="col">
+			<input type="text" id="barcode_scanner" />
+		</div>
 	</div>
 
 
@@ -118,6 +124,8 @@
 			audioKO = new Audio('ko.wav');
 			audioStock = new Audio('stock.wav');
 
+
+
 			$('#card_factory_state').click(function() {
 				updateProductStock(current_product);
 			});
@@ -136,6 +144,19 @@
 
 			$('#card_state').click(function() {
 				manualScan($('#inventory_history_filter').find('[type=search]').val());
+			});
+
+			$('#barcode_scanner').on("keydown", function(e){
+				if(e.which == 13){
+					var code = $('#barcode_scanner').val();
+					console.log('Scanned code : ' + code);
+					inventoryScan(code);
+					$('#barcode_scanner').val('')
+					// your code
+					return false;
+				} else {
+					//$('#barcode_scanner').val(getFinalCode($('#barcode_scanner').val()));
+				}
 			});
 
 			history_table = $('#inventory_history').DataTable(mergeOptions(
@@ -169,6 +190,8 @@
 					iDisplayLength: 25,
 				}
 			));
+
+			$('#barcode_scanner').focus();
 		})();
 
 		function connectWebSocket() {
@@ -214,8 +237,27 @@
 			};
 		}
 
-		function manualScan(term) {
-			ws.send('{"action":"manual_scan", "description":"' + term + '"}');
+
+		function inventoryScan(code) {
+			code = getFinalCode(code);
+			console.log('Analyzed code : ' + code);
+			ws.send('{"action":"manual_scan", "description":"' + code + '"}');
+			console.log("Sent !");
+		}
+
+		String.prototype.allReplace = function(obj) {
+			var retStr = this;
+			for (var x in obj) {
+				retStr = retStr.split(x).join(obj[x]);
+			}
+			return retStr;
+		};
+
+		function getFinalCode(code) {
+			if (isNaN(code)) {
+				code = code.allReplace({' ': '', '«': '3', '»': '3', '’': '4', '§': '6', '!': '8', 'à': '0', '&': '1', 'é': '2', '"': '3', '\'': '4', '(': '5', '-': '6', 'è': '7', '_': '8', 'ç': '9'});
+			}
+			return code;
 		}
 
 		function updateInventory(product, update_server_inventory) {
@@ -230,6 +272,7 @@
 			}
 
 			history_table.ajax.reload();
+			$('#barcode_scanner').focus();
 		}
 
 		function updateProductStock(product) {

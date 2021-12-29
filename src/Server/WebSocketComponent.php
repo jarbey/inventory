@@ -21,6 +21,7 @@ class WebSocketComponent implements MessageComponentInterface {
 	const INVENTORY_SCAN = 'inventory_scan';
 	const UPDATE_INVENTORY_SCAN = 'update_inventory_scan';
 	const UPDATE_STOCK = 'update_stock';
+    const READY = 'ready';
 
 	/** @var \SplObjectStorage */
 	private $clients;
@@ -79,8 +80,11 @@ class WebSocketComponent implements MessageComponentInterface {
 					case self::UPDATE_STOCK:
 						$this->broadcastMessage($this->processUpdateStock($server_message->result), $from, true);
 						break;
+                    case self::READY:
+                        $this->logger->warning('Database engine ready');
+                        break;
 					default:
-						$this->logger->warning('Action unkonwn ' . $server_message->action);
+						$this->logger->warning('Action unknown ' . $server_message->action);
 						$this->broadcastMessage($message, $from, false);
 						break;
 				}
